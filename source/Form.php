@@ -288,7 +288,12 @@ class Silva_Form extends Curry_Form
         if (is_array($this->colElmMap) && (($elm = $this->colElmMap[$column->getPhpName()]) !== null) ) {
             if (is_string($elm)) {
                 // user-defined Curry_Form_Element
-                $element = $this->createElement($elm, strtolower($column->getName()));
+                if (strtolower($column->getName())=='content') {
+                	$field = strtolower($column->getTableName()) . '_content';
+                } else {
+                	$field = strtolower($column->getName());
+                }
+                $element = $this->createElement($elm, $field);
             } elseif (is_array($elm)) {
                 // could be either:
                 // 1. Curry_Form_Element with array of user-defined options
@@ -454,8 +459,11 @@ class Silva_Form extends Curry_Form
             if ( ($column->isPrimaryKey() && $this->ignorePks) || ($column->isForeignKey() && $this->ignoreFks) ) {
                 continue;
             }
-
+			
             $fieldName = strtolower($column->getName());
+			if ($fieldName == 'content') {
+				$fieldName = strtolower($this->tableMap->getName()) . '_content';
+			}
             // whether to ignore this column?
             if (in_array($fieldName, $ignoredColumns)) {
                 continue;
